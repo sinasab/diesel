@@ -326,3 +326,16 @@ where
         (*self).to_sql(out)
     }
 }
+
+impl<A, T1, T2, DB> ToSql<A, DB> for (T1, T2)
+where
+    DB: Backend,
+    T1: ToSql<A, DB>,
+    T2: ToSql<A, DB>,
+{
+    fn to_sql<'b>(&'b self, out: &mut Output<'b, '_, DB>) -> Result {
+        let (ref t1, ref t2) = *self;
+        t1.to_sql(out)?;
+        t2.to_sql(out)
+    }
+}
